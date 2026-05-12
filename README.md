@@ -52,10 +52,10 @@ src/
  ├── app.js
  └── server.js
 
-cypress/
- ├── e2e/
- ├── fixtures/
- └── support/
+tests/
+ ├── unit/
+ ├── integration/
+ └── e2e/
 ```
 
 ---
@@ -66,6 +66,7 @@ cypress/
 
 * Node.js
 * Express.js
+* SQLite
 * JavaScript
 
 ### Testing
@@ -195,6 +196,20 @@ npx cypress open
 ```bash
 npx cypress run
 ```
+
+---
+
+---
+
+## 🗄️ Database
+
+The project uses SQLite as the relational database for local development and testing purposes.
+
+### Planned Database Stack
+
+* SQLite
+* SQL queries
+* Relational data modeling
 
 ---
 
