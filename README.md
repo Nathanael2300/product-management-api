@@ -4,7 +4,7 @@ REST API for product management built with Node.js and Express following MVC arc
 
 ---
 
-## 🚀 Project Goal
+##  Project Goal
 
 This project was created to practice:
 
@@ -19,7 +19,7 @@ This project was created to practice:
 
 ---
 
-## 🧱 Architecture
+##  Architecture
 
 The project follows an MVC-based architecture with service layer separation:
 
@@ -38,7 +38,7 @@ Route → Controller → Service → Model
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 src/
@@ -60,7 +60,7 @@ tests/
 
 ---
 
-## 🛠️ Technologies
+##  Technologies
 
 ### Backend
 
@@ -78,7 +78,7 @@ tests/
 
 ---
 
-## 📦 Features
+##  Features
 
 ### Products
 
@@ -97,7 +97,7 @@ tests/
 
 ---
 
-## 🌐 API Endpoints
+##  API Endpoints
 
 | Method | Endpoint      | Description       |
 | ------ | ------------- | ----------------- |
@@ -109,7 +109,7 @@ tests/
 
 ---
 
-## 🧪 Testing Strategy
+##  Testing Strategy
 
 This project follows SDET-oriented testing practices.
 
@@ -142,7 +142,7 @@ Tests complete endpoint behavior:
 
 ---
 
-## 📌 Testing Scenarios
+##  Testing Scenarios
 
 ### Positive Scenarios
 
@@ -161,7 +161,7 @@ Tests complete endpoint behavior:
 
 ---
 
-## ▶️ Running the Project
+##  Running the Project
 
 ### Install dependencies
 
@@ -183,7 +183,7 @@ npm start
 
 ---
 
-## 🧪 Running Tests
+##  Running Tests
 
 ### Run Cypress
 
@@ -201,7 +201,7 @@ npx cypress run
 
 ---
 
-## 🗄️ Database
+##  Database
 
 The project uses SQLite as the relational database for local development and testing purposes.
 
@@ -213,7 +213,7 @@ The project uses SQLite as the relational database for local development and tes
 
 ---
 
-## 🎯 Future Improvements
+##  Future Improvements
 
 * JWT authentication
 * PostgreSQL integration
@@ -227,7 +227,7 @@ The project uses SQLite as the relational database for local development and tes
 
 ---
 
-## 📚 Learning Focus
+##  Learning Focus
 
 This project focuses on:
 
