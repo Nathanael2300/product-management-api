@@ -1,1 +1,1 @@
-// Placeholder for server.js
+import("./database/database.js");
