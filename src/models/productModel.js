@@ -3,9 +3,9 @@ import db from "../database/database.js";
 class ProductModel {
   getAllProducts() {
     return new Promise((resolve, reject) => {
-      db.all("SELECT * FROM products", [], (err, rows) => {
+      db.all("SELECT * FROM products", [], function (err, rows) {
         if (err) {
-          reject(err.message);
+          reject(err);
           return;
         }
 
@@ -16,13 +16,13 @@ class ProductModel {
 
   getProductById(id) {
     return new Promise((resolve, reject) => {
-      db.get("SELECT * FROM products WHERE id = ?", [id], (err, rows) => {
+      db.get("SELECT * FROM products WHERE id = ?", [id], function (err, row) {
         if (err) {
-          reject(err.message);
+          reject(err);
           return;
         }
 
-        resolve(rows);
+        resolve(row);
       });
     });
   }
@@ -34,9 +34,9 @@ class ProductModel {
       db.run(
         "INSERT INTO products (name, price, category, stock) VALUES (?, ?, ?, ?)",
         [name, price, category, stock],
-        (err) => {
+        function (err) {
           if (err) {
-            reject(err.message);
+            reject(err);
             return;
           }
           resolve({
@@ -56,16 +56,16 @@ class ProductModel {
 
     return new Promise((resolve, reject) => {
       db.run(
-        "UPDATE products SET name = ? price = ? category = ? stock = ? WHERE = ?",
+        "UPDATE products SET name = ?, price = ?, category = ?, stock = ? WHERE id = ?",
         [name, price, category, stock, id],
-        (err) => {
+        function (err) {
           if (err) {
-            reject(err.message);
+            reject(err);
             return;
           }
 
           resolve({
-            updeted: this.changes,
+            updated: this.changes,
           });
         },
       );
@@ -74,13 +74,15 @@ class ProductModel {
 
   deleteProduct(id) {
     return new Promise((resolve, reject) => {
-      db.run("DELETE FROM products WHERE id =?", [id], (err) => {
+      db.run("DELETE FROM products WHERE id =?", [id], function (err) {
         if (err) {
-          reject(err.message);
+          reject(err);
           return;
         }
 
-        resolve(this.changes);
+        resolve({
+          deleted: this.changes,
+        });
       });
     });
   }
