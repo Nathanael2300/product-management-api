@@ -4,7 +4,9 @@
   "description": "REST API for product management built with Node.js and Express following MVC architecture and SDET-oriented practices.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha \"test/**/*.spec.js\""
+    "test": "mocha \"test/**/*.spec.js\"",
+    "test:model": "mocha \"test/unit/unitary_productModel.spec.js\"",
+    "test:service": "mocha \"test/unit/unitary_productService.spec.js\""
   },
   "repository": {
     "type": "git",
