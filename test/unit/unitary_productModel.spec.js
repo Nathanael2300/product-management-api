@@ -135,7 +135,7 @@ describe("Product Model", () => {
     });
   });
 
-  describe.only("/DELETE/:id", () => {
+  describe("/DELETE/:id", () => {
     describe("Senarios positive", () => {
       it("Should delete user successfully", async () => {
         const product = await productModel.deleteProduct(productId);
@@ -146,7 +146,6 @@ describe("Product Model", () => {
       it("Should not delete when user id is invalid", async () => {
         const idInvalid = faker.number.int({ min: 50000 });
         const product = await productModel.deleteProduct(idInvalid);
-        console.log(product);
 
         expect(product).to.have.property("deleted", 0);
       });
