@@ -10,11 +10,7 @@ import productModel from "../../src/models/productModel.js";
 import productService from "../../src/services/productService.js";
 import db from "../../src/database/database.js";
 
-describe.only("Product Service", () => {
-  afterEach(() => {
-    sinon.restore();
-  });
-
+describe("Product Service", () => {
   beforeEach(async () => {
     await new Promise((resolve, reject) => {
       db.run("DELETE FROM products", (err) => {
@@ -24,21 +20,23 @@ describe.only("Product Service", () => {
     });
   });
 
-  describe("/GET/PRODUCTS", () => {
-    beforeEach(async () => {
-      const productData1 = productFactory();
-      const productData2 = productFactory();
+  afterEach(() => {
+    sinon.restore();
+  });
 
-      await productService.createProduct(productData1);
-      await productService.createProduct(productData2);
-    });
+  describe("/GET/PRODUCTS", () => {
     describe("Positive scenarios", () => {
-      it("Should return an empty array when there are no products", async () => {
+      it("Should return all products", async () => {
+        const productData1 = productFactory();
+        const productData2 = productFactory();
+        sinon
+          .stub(productModel, "getAllProducts")
+          .resolves([productData1, productData2]);
+
         const products = await productService.getAllProducts();
 
-        expect(products).to.be.an("array");
-        expect(products).to.have.lengthOf(2);
-        const fields = ["id", "name", "price", "category", "stock"];
+        expect(products).to.be.an("array").with.lengthOf(2);
+        const fields = ["name", "price", "category", "stock"];
         for (const field of fields) {
           for (const product of products) {
             expect(product).to.have.property(field);
@@ -56,21 +54,24 @@ describe.only("Product Service", () => {
   });
 
   describe("/GET/PRODUCTS/:id", () => {
-    let productId;
-    beforeEach(async () => {
-      const productData = productFactory();
-
-      const product = await productService.createProduct(productData);
-      productId = product.id;
-    });
     describe("Positive scenarios", () => {
-      it("Should return 1 user off the list", async () => {
-        const productById = await productService.getPruductsById(productId);
-        sinon.stub(productModel, "getProductById").resolves(productById);
+      it("Should return a product by id", async () => {
+        const fakeProduct = {
+          id: 1,
+          name: "Mouse",
+          price: 50,
+          category: "Tech",
+          stock: 10,
+        };
+
+        sinon.stub(productModel, "getProductById").resolves(fakeProduct);
+
+        const productById = await productService.getProductsById(1);
 
         expect(productById).to.be.an("object");
 
         const fields = ["id", "name", "price", "category", "stock"];
+
         for (const field of fields) {
           expect(productById).to.have.property(field);
         }
@@ -79,8 +80,9 @@ describe.only("Product Service", () => {
     describe("Negative scenarios", () => {
       it("Should not return product and should return a error", async () => {
         const invalidId = faker.number.int({ min: 50000 });
+        sinon.stub(productModel, "getProductById").resolves(undefined);
         await expect(
-          productService.getPruductsById(invalidId),
+          productService.getProductsById(invalidId),
         ).to.be.rejectedWith("Product not found");
       });
     });
@@ -88,28 +90,93 @@ describe.only("Product Service", () => {
 
   describe("/POST/PRODUCTS", () => {
     describe("Positive scenarios", () => {
-      it("Should create product data successfully", async () => {});
+      it("Should create product data successfully", async () => {
+        const productData = productFactory();
+
+        const fakeCreatedProduct = {
+          id: 1,
+          ...productData,
+        };
+
+        sinon.stub(productModel, "createProduct").resolves(fakeCreatedProduct);
+
+        const product = await productService.createProduct(productData);
+
+        const fields = {
+          fieldsObject: ["createdProduct", "message"],
+          fieldsProducts: ["id", "name", "price", "category", "stock"],
+        };
+
+        for (const field of fields.fieldsObject) {
+          expect(product).to.have.property(field);
+        }
+
+        for (const field of fields.fieldsProducts) {
+          expect(product.createdProduct).to.have.property(field);
+        }
+
+        expect(product.message).to.equal("Product created successfully");
+      });
     });
-    describe("Negative scenarios", () => {});
+
+    describe("Negative scenarios", () => {
+      it("Should not create product with empty or missing fields", async () => {
+        const fields = [
+          { key: "name", value: "", error: "Name is required" },
+          { key: "price", value: undefined, error: "Price is required" },
+          { key: "category", value: "", error: "Category is required" },
+          { key: "stock", value: undefined, error: "Stock is required" },
+        ];
+
+        for (const field of fields) {
+          const productData = productFactory();
+          if (field.value === undefined) delete productData[field.key];
+          else productData[field.key] = field.value;
+
+          try {
+            await productService.createProduct(productData);
+            throw new Error("Test failed: validation did not throw");
+          } catch (error) {
+            expect(error.issues[0].message).to.equal(field.error);
+          }
+        }
+      });
+
+      it("Should return an error when price is negative", async () => {
+        const productData = productFactory({ price: -10 });
+
+        await expect(
+          productService.createProduct(productData),
+        ).to.be.rejectedWith("Price must be positive");
+      });
+
+      it("Should return an error when stock is negative", async () => {
+        const productData = productFactory({ stock: -10 });
+
+        await expect(
+          productService.createProduct(productData),
+        ).to.be.rejectedWith("Stock must be positive");
+      });
+    });
   });
 
   describe("/PUT/PRODUCTS/:id", () => {
-    let productId;
-    beforeEach(async () => {
-      const productData = productFactory();
-
-      const product = await productService.createProduct(productData);
-      productId = product.id;
-    });
     describe("Positive scenarios", () => {
       it("Should update product data successfully", async () => {
         const updatedData = productFactory();
 
-        await productService.updataProduct(productId, updatedData);
+        const fakeUpdatedProduct = {
+          id: 1,
+          ...updatedData,
+        };
 
-        const fetchedProduct = await productService.getPruductsById(productId);
+        sinon.stub(productModel, "updateProduct").resolves(fakeUpdatedProduct);
 
-        expect(fetchedProduct).to.include({
+        const result = await productService.updateProduct(1, updatedData);
+
+        expect(result.message).to.equal("Product updated successfully");
+
+        expect(result.updatedProduct).to.include({
           name: updatedData.name,
           price: updatedData.price,
           category: updatedData.category,
@@ -121,14 +188,41 @@ describe.only("Product Service", () => {
       it("Should not return product and should return a error", async () => {
         const invalidId = faker.number.int({ min: 50000 });
         await expect(
-          productService.getPruductsById(invalidId),
+          productService.getProductsById(invalidId),
         ).to.be.rejectedWith("Product not found");
       });
     });
   });
 
   describe("/DELETE/PRODUCTS/:id", () => {
-    describe("Positive scenarios", () => {});
-    describe("Negative scenarios", () => {});
+    describe("Positive scenarios", () => {
+      it("Should delete an product off list", async () => {
+        const fakeDeletedProduct = {
+          deleted: 1,
+        };
+
+        sinon.stub(productModel, "deleteProduct").resolves(fakeDeletedProduct);
+
+        const productDeleted = await productService.deleteProduct(1);
+
+        expect(productDeleted).to.be.an("object");
+        expect(productDeleted).to.have.property("deletedProduct");
+        expect(productDeleted).to.have.property("message");
+
+        expect(productDeleted.message).to.equal("Deleted successfully");
+
+        expect(productDeleted.deletedProduct).to.deep.equal(fakeDeletedProduct);
+      });
+    });
+
+    describe("Negative scenarios", () => {
+      it("Should not delete when id is invalid", async () => {
+        sinon.stub(productModel, "deleteProduct").resolves({ deleted: 0 });
+
+        await expect(productService.deleteProduct(999)).to.be.rejectedWith(
+          "Product not found",
+        );
+      });
+    });
   });
 });

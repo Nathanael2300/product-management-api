@@ -14,29 +14,33 @@ export const getProductById = z.object({
 export const createProductSchema = z.object({
   name: z
     .string({
+      required_error: "Name is required",
       invalid_type_error: "Name must be a string",
     })
-    .min(1, { invalid_type_error: "Name is required" })
-    .trim(),
+    .trim()
+    .min(1, { message: "Name is required" }),
 
   price: z
     .number({
+      message: "Price is required",
       invalid_type_error: "Price must be a number",
     })
-    .positive({ invalid_type_error: "Price must be positive" }),
+    .positive({ message: "Price must be positive" }),
 
   category: z
     .string({
+      required_error: "Category is required",
       invalid_type_error: "Category must be a string",
     })
-    .min(1, { invalid_type_error: "Category is required" })
-    .trim(),
+    .trim()
+    .min(1, { message: "Category is required" }),
 
   stock: z
     .number({
-      invalid_type_error: "Stock must be a string",
+      message: "Stock is required",
+      invalid_type_error: "Stock must be a number",
     })
-    .positive({ invalid_type_error: "Stock must be positive" }),
+    .positive({ message: "Stock must be positive" }),
 });
 
 export const updateProductSchema = createProductSchema.partial();
