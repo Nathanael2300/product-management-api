@@ -11,24 +11,16 @@ class ProductService {
   async getAllProducts() {
     const products = await productModel.getAllProducts();
 
-    if (products.length === 0) {
-      return [];
-    }
-
     return products;
   }
 
-  async getPruductsById(rawId) {
+  async getProductsById(rawId) {
     const { id } = getProductById.parse({ id: rawId });
-
-    if (!id) {
-      throw new AppError("Id is required", 400);
-    }
 
     const product = await productModel.getProductById(id);
 
     if (!product) {
-      throw new AppError("Product not found", 400);
+      throw new AppError("Product not found", 404);
     }
 
     return product;
@@ -40,45 +32,51 @@ class ProductService {
     const { price, stock } = productData;
 
     if (price < 0) {
-      throw new AppError("Price cannot be negative");
+      throw new AppError("Price cannot be negative", 400);
     }
 
     if (stock < 0) {
-      throw new AppError("stock cannot be negative");
+      throw new AppError("Stock cannot be negative", 400);
     }
 
-    const product = await productModel.createProduct(productData);
-    return product;
+    const createdProduct = await productModel.createProduct(productData);
+
+    return {
+      createdProduct,
+      message: "Product created successfully",
+    };
   }
 
-  async updataProduct(rawId, productData) {
+  async updateProduct(rawId, productData) {
     const { id } = getProductById.parse({ id: rawId });
+
     updateProductSchema.parse(productData);
 
-    if (!id) {
-      throw new AppError("Id is required", 400);
+    const updatedProduct = await productModel.updateProduct(id, productData);
+
+    if (!updatedProduct) {
+      throw new AppError("Product not found", 404);
     }
 
-    const product = await productModel.updateProduct(id, productData);
-    if (!product) {
-      throw new AppError("Product not found");
-    }
-    return product;
+    return {
+      updatedProduct,
+      message: "Product updated successfully",
+    };
   }
 
   async deleteProduct(rawId) {
     const { id } = deleteProductSchema.parse({ id: rawId });
 
-    if (!id) {
-      throw new AppError("Id is required", 400);
+    const deletedProduct = await productModel.deleteProduct(id);
+
+    if (deletedProduct.deleted === 0) {
+      throw new AppError("Product not found", 404);
     }
 
-    const product = await productModel.deleteProduct(id);
-    if (!product) {
-      throw new AppError("Product not found", 400);
-    }
-
-    return product;
+    return {
+      deletedProduct,
+      message: "Deleted successfully",
+    };
   }
 }
 
