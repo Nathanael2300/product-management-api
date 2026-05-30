@@ -37,3 +37,5 @@ router.delete(
   validate(deleteProductSchema, "params"),
   asyncHandler(productControllers.deleteProduct),
 );
+
+export default router;
