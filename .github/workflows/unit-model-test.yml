@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Unit Model Tests
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - feature/**
 
 jobs:
-  unit-tests:
+  Unit-Model-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -38,7 +38,7 @@ jobs:
         run: npm run test:model
 
       - name: Upload coverage report
-        if: success() && (exists('coverage/lcov.info') || exists('coverage'))
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report

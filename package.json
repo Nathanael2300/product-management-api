@@ -6,7 +6,9 @@
   "scripts": {
     "test": "mocha \"test/**/*.spec.js\"",
     "test:model": "mocha \"test/unit/unitary_productModel.spec.js\"",
-    "test:service": "mocha \"test/unit/unitary_productService.spec.js\""
+    "test:service": "mocha \"test/unit/unitary_productService.spec.js\"",
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
