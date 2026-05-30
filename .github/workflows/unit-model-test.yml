@@ -38,7 +38,7 @@ jobs:
         run: npm run test:model
 
       - name: Upload coverage report
-        if: success() && (exists('coverage/lcov.info') || exists('coverage'))
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
