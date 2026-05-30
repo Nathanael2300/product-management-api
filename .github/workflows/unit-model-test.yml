@@ -12,7 +12,7 @@ on:
       - feature/**
 
 jobs:
-  unit-tests:
+  Unit-Model-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
