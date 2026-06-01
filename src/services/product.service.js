@@ -5,7 +5,7 @@ import {
   createProductSchema,
   updateProductSchema,
   deleteProductSchema,
-} from "../schema/productSchema.js";
+} from "../schema/product.schema.js";
 
 class ProductService {
   async getAllProducts() {

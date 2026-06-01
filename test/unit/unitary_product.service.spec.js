@@ -5,9 +5,9 @@ import chaiAsPromised from "chai-as-promised";
 import sinon from "sinon";
 chai.use(chaiAsPromised);
 
-import { productFactory } from "../factory/productFactory.js";
-import productModel from "../../src/models/productModel.js";
-import productService from "../../src/services/productService.js";
+import { productFactory } from "../factory/product.factory.js";
+import productModel from "../../src/repositories/product.repositories.js";
+import productService from "../../src/services/product.service.js";
 import db from "../../src/database/database.js";
 
 describe("Product Service", () => {

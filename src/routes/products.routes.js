@@ -1,6 +1,6 @@
 import express from "express";
 import productControllers from "../controllers/product.controllers.js";
-import asyncHandler from "../middlewares/asyncHandler.js";
+import asyncHandler from "../middlewares/async.handler.js";
 import { validate } from "../middlewares/validation.js";
 
 import {
@@ -8,7 +8,7 @@ import {
   createProductSchema,
   updateProductSchema,
   deleteProductSchema,
-} from "../schema/productSchema.js";
+} from "../schema/product.schema.js";
 
 const router = express.Router();
 
