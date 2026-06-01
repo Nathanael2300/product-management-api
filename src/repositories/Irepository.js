@@ -20,4 +20,4 @@ class IProductRepository {
   }
 }
 
-export default new IRepository();
+export default new IProductRepository();
