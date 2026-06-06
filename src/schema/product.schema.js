@@ -1,10 +1,10 @@
-import z from "zod";
+import { z } from "zod";
 
 const idSchema = z.coerce
   .number({
-    invalid_type_error: "Id invalid",
+    message: "Id invalid",
   })
-  .int()
+  .int("Id must be an integer")
   .positive("Invalid value");
 
 export const getProductById = z.object({
@@ -14,33 +14,37 @@ export const getProductById = z.object({
 export const createProductSchema = z.object({
   name: z
     .string({
-      required_error: "Name is required",
-      invalid_type_error: "Name must be a string",
+      message: "Name must be a string",
     })
     .trim()
-    .min(1, { message: "Name is required" }),
+    .min(1, "Name is required"),
 
-  price: z
-    .number({
-      message: "Price is required",
-      invalid_type_error: "Price must be a number",
-    })
-    .positive({ message: "Price must be positive" }),
+  price: z.number({
+    error: (issue) => {
+      if (issue.input === undefined) {
+        return "Price is required";
+      }
+
+      return "Price must be a number";
+    },
+  }),
 
   category: z
     .string({
-      required_error: "Category is required",
-      invalid_type_error: "Category must be a string",
+      message: "Category must be a string",
     })
     .trim()
-    .min(1, { message: "Category is required" }),
+    .min(1, "Category is required"),
 
-  stock: z
-    .number({
-      message: "Stock is required",
-      invalid_type_error: "Stock must be a number",
-    })
-    .positive({ message: "Stock must be positive" }),
+  stock: z.number({
+    error: (issue) => {
+      if (issue.input === undefined) {
+        return "Stock is required";
+      }
+
+      return "Stock must be a number";
+    },
+  }),
 });
 
 export const updateProductSchema = createProductSchema.partial();
