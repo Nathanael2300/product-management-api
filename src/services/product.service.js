@@ -1,4 +1,5 @@
 import ProductRepository from "../repositories/product.repositories.js";
+import product from "../models/product.model.js";
 import AppError from "../utils/AppError.js";
 import {
   getProductById,
@@ -6,6 +7,7 @@ import {
   updateProductSchema,
   deleteProductSchema,
 } from "../schema/product.schema.js";
+import productRepositories from "../repositories/product.repositories.js";
 
 class ProductService {
   async getAllProducts() {
@@ -29,22 +31,17 @@ class ProductService {
   async createProduct(productData) {
     createProductSchema.parse(productData);
 
-    const { price, stock } = productData;
+    const productModel = new product(productData);
 
-    if (price < 0) {
-      throw new AppError("Price cannot be negative", 400);
+    try {
+      productModel.validate();
+    } catch (error) {
+      throw new AppError(error.message, 400);
     }
 
-    if (stock < 0) {
-      throw new AppError("Stock cannot be negative", 400);
-    }
+    const createdProduct = await ProductRepository.create(productModel);
 
-    const createdProduct = await ProductRepository.create(productData);
-
-    return {
-      createdProduct,
-      message: "Product created successfully",
-    };
+    return createdProduct;
   }
 
   async updateProduct(rawId, productData) {
@@ -52,16 +49,33 @@ class ProductService {
 
     updateProductSchema.parse(productData);
 
-    const updatedProduct = await ProductRepository.update(id, productData);
+    const currentProduct = await productRepositories.GetById(id);
 
-    if (!updatedProduct) {
+    if (!currentProduct) {
       throw new AppError("Product not found", 404);
     }
 
-    return {
-      updatedProduct,
-      message: "Product updated successfully",
+    const dataUpdated = {
+      ...currentProduct,
+      ...productData,
     };
+
+    const productModel = new product(dataUpdated);
+
+    try {
+      productModel.validate();
+    } catch (error) {
+      throw new AppError(error.message, 400);
+    }
+
+    const updatedProduct = await ProductRepository.update(id, dataUpdated);
+    if (updatedProduct.updated === 0) {
+      throw new AppError("Product not found", 404);
+    }
+
+    const productById = await ProductRepository.GetById(id);
+
+    return productById;
   }
 
   async deleteProduct(rawId) {
@@ -73,10 +87,7 @@ class ProductService {
       throw new AppError("Product not found", 404);
     }
 
-    return {
-      deletedProduct,
-      message: "Deleted successfully",
-    };
+    return deletedProduct;
   }
 }
 
