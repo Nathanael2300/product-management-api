@@ -6,7 +6,7 @@ class ProductController {
 
     return res.status(200).json({
       product_total: products.length,
-      products: products,
+      productsList: products,
     });
   }
 
@@ -24,17 +24,18 @@ class ProductController {
 
     return res.status(201).json({
       message: "Product created successfully",
-      productCreated: productCreated,
+      productCreated,
     });
   }
 
   async uptateProduct(req, res) {
     const { id } = req.params;
-    const productUpdated = await productService.updateProduct(id);
+
+    const productUpdate = await productService.updateProduct(id, req.body);
 
     return res.status(200).json({
       message: "Product updated succssefully ",
-      productUpdated: productUpdated,
+      productUpdated: productUpdate,
     });
   }
 
