@@ -1,4 +1,4 @@
-import IRepository from "../repositories/Irepository.js";
+import IRepository from "../services/IProductService.js";
 import db from "../database/database.js";
 
 class ProductRepository extends IRepository {
