@@ -5,8 +5,8 @@ import chaiAsPromised from "chai-as-promised";
 import sinon from "sinon";
 chai.use(chaiAsPromised);
 
-import { productFactory } from "../factory/product.factory.js";
-import productModel from "../../src/repositories/product.repositories.js";
+import productFactory from "../factory/product.factory.js";
+import productRepository from "../../src/repositories/product.repositories.js";
 import productService from "../../src/services/product.service.js";
 import db from "../../src/database/database.js";
 
@@ -30,7 +30,7 @@ describe("Product Service", () => {
         const productData1 = productFactory();
         const productData2 = productFactory();
         sinon
-          .stub(productModel, "getAllProducts")
+          .stub(productRepository, "getAll")
           .resolves([productData1, productData2]);
 
         const products = await productService.getAllProducts();
@@ -46,7 +46,7 @@ describe("Product Service", () => {
     });
     describe("Negative scenarios", () => {
       it("Should return an empty array when there are no products", async () => {
-        sinon.stub(productModel, "getAllProducts").resolves([]);
+        sinon.stub(productRepository, "getAll").resolves([]);
         const products = await productService.getAllProducts();
         expect(products).to.be.an("array").that.is.empty;
       });
@@ -64,7 +64,7 @@ describe("Product Service", () => {
           stock: 10,
         };
 
-        sinon.stub(productModel, "getProductById").resolves(fakeProduct);
+        sinon.stub(productRepository, "GetById").resolves(fakeProduct);
 
         const productById = await productService.getProductsById(1);
 
@@ -80,7 +80,7 @@ describe("Product Service", () => {
     describe("Negative scenarios", () => {
       it("Should not return product and should return a error", async () => {
         const invalidId = faker.number.int({ min: 50000 });
-        sinon.stub(productModel, "getProductById").resolves(undefined);
+        sinon.stub(productRepository, "GetById").resolves(undefined);
         await expect(
           productService.getProductsById(invalidId),
         ).to.be.rejectedWith("Product not found");
@@ -98,24 +98,15 @@ describe("Product Service", () => {
           ...productData,
         };
 
-        sinon.stub(productModel, "createProduct").resolves(fakeCreatedProduct);
+        sinon.stub(productRepository, "create").resolves(fakeCreatedProduct);
 
         const product = await productService.createProduct(productData);
 
-        const fields = {
-          fieldsObject: ["createdProduct", "message"],
-          fieldsProducts: ["id", "name", "price", "category", "stock"],
-        };
+        const fields = ["id", "name", "price", "category", "stock"];
 
-        for (const field of fields.fieldsObject) {
+        for (const field of fields) {
           expect(product).to.have.property(field);
         }
-
-        for (const field of fields.fieldsProducts) {
-          expect(product.createdProduct).to.have.property(field);
-        }
-
-        expect(product.message).to.equal("Product created successfully");
       });
     });
 
@@ -145,17 +136,23 @@ describe("Product Service", () => {
       it("Should return an error when price is negative", async () => {
         const productData = productFactory({ price: -10 });
 
-        await expect(
-          productService.createProduct(productData),
-        ).to.be.rejectedWith("Price must be positive");
+        try {
+          await productService.createProduct(productData);
+          throw new Error("Test failed: validation did not throw");
+        } catch (error) {
+          expect(error.message).to.equal("Price cannot be negative");
+        }
       });
 
       it("Should return an error when stock is negative", async () => {
         const productData = productFactory({ stock: -10 });
 
-        await expect(
-          productService.createProduct(productData),
-        ).to.be.rejectedWith("Stock must be positive");
+        try {
+          await productService.createProduct(productData);
+          throw new Error("Test failed: validation did not throw");
+        } catch (error) {
+          expect(error.message).to.equal("Stock cannot be negative");
+        }
       });
     });
   });
@@ -170,13 +167,11 @@ describe("Product Service", () => {
           ...updatedData,
         };
 
-        sinon.stub(productModel, "updateProduct").resolves(fakeUpdatedProduct);
+        sinon.stub(productRepository, "update").resolves(fakeUpdatedProduct);
 
         const result = await productService.updateProduct(1, updatedData);
 
-        expect(result.message).to.equal("Product updated successfully");
-
-        expect(result.updatedProduct).to.include({
+        expect(result).to.include({
           name: updatedData.name,
           price: updatedData.price,
           category: updatedData.category,
@@ -196,28 +191,31 @@ describe("Product Service", () => {
 
   describe("/DELETE/PRODUCTS/:id", () => {
     describe("Positive scenarios", () => {
+      let productId;
+      beforeEach(async () => {
+        const productData = productFactory();
+        const product = await productRepository.create(productData);
+
+        productId = product.id;
+      });
       it("Should delete an product off list", async () => {
         const fakeDeletedProduct = {
           deleted: 1,
         };
 
-        sinon.stub(productModel, "deleteProduct").resolves(fakeDeletedProduct);
+        sinon.stub(productRepository, "delete").resolves(fakeDeletedProduct);
 
-        const productDeleted = await productService.deleteProduct(1);
+        const productDeleted = await productService.deleteProduct(productId);
 
         expect(productDeleted).to.be.an("object");
-        expect(productDeleted).to.have.property("deletedProduct");
-        expect(productDeleted).to.have.property("message");
 
-        expect(productDeleted.message).to.equal("Deleted successfully");
-
-        expect(productDeleted.deletedProduct).to.deep.equal(fakeDeletedProduct);
+        expect(productDeleted.deleted).to.eql(1);
       });
     });
 
     describe("Negative scenarios", () => {
       it("Should not delete when id is invalid", async () => {
-        sinon.stub(productModel, "deleteProduct").resolves({ deleted: 0 });
+        sinon.stub(productRepository, "delete").resolves({ deleted: 0 });
 
         await expect(productService.deleteProduct(999)).to.be.rejectedWith(
           "Product not found",
