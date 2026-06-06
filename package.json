@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha \"test/**/*.spec.js\"",
-    "test:model": "mocha \"test/unit/unitary_productModel.spec.js\"",
-    "test:service": "mocha \"test/unit/unitary_productService.spec.js\"",
-    "test:integration": "mocha \"test/integration/integrationTest_ProductService.spec.js\"",
+    "test:repository": "mocha \"test/unit/unitary_product.repository.spec.js\"",
+    "test:service": "mocha \"test/unit/unitary_product.service.spec.js\"",
+    "test:integration": "mocha \"test/integration/integration.test.spec.js\"",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
   },
