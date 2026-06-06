@@ -5,8 +5,7 @@ export const validate = (schema, property = "body") => {
       next();
     } catch (err) {
       return res.status(400).json({
-        message: "Validation error",
-        errors: err.errors,
+        message: err.issues[0].message,
       });
     }
   };
