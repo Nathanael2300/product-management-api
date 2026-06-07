@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../../src/app.js";
 
-class UserApi {
+class ProductApi {
   getAll() {
     return request(app).get("/products");
   }
@@ -23,4 +23,4 @@ class UserApi {
   }
 }
 
-export default new UserApi();
+export default new ProductApi();
