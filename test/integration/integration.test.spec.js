@@ -3,7 +3,6 @@ import productApi from "../helpers/product.api.js";
 import productFactory from "../factory/product.factory.js";
 import { faker } from "@faker-js/faker";
 import db from "../../src/database/database.js";
-import { id } from "zod/locales";
 
 describe("Integrations Test", () => {
   beforeEach(async () => {
