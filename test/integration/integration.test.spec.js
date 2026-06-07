@@ -3,6 +3,7 @@ import productApi from "../helpers/product.api.js";
 import productFactory from "../factory/product.factory.js";
 import { faker } from "@faker-js/faker";
 import db from "../../src/database/database.js";
+import { id } from "zod/locales";
 
 describe("Integrations Test", () => {
   beforeEach(async () => {
@@ -99,6 +100,7 @@ describe("Integrations Test", () => {
 
         const product = productCreated.body.productCreated;
         for (const [key, type] of Object.entries(fieldsAndTyps)) {
+          console.log("helper:", product);
           expect(product).to.have.property(key);
           expect(product[key]).to.be.an(type);
         }
