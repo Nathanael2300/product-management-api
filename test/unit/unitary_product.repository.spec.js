@@ -62,7 +62,7 @@ describe("Product Model", () => {
   describe("/POST/PRODUCTS", () => {
     describe("Senarios positive", () => {
       it("Should create a product successfully", async () => {
-        const productData = await productFactory();
+        const productData = productFactory();
 
         const product = await productRepository.create(productData);
         const fields = ["id", "name", "price", "category", "stock"];
