@@ -99,6 +99,7 @@ describe("Integrations Test", () => {
 
         const product = productCreated.body.productCreated;
         for (const [key, type] of Object.entries(fieldsAndTyps)) {
+          console.log("helper:", product);
           expect(product).to.have.property(key);
           expect(product[key]).to.be.an(type);
         }

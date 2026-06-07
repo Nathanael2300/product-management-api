@@ -167,9 +167,16 @@ describe("Product Service", () => {
           ...updatedData,
         };
 
-        sinon.stub(productRepository, "update").resolves(fakeUpdatedProduct);
+        sinon.stub(productRepository, "GetById").resolves({
+          ...fakeUpdatedProduct,
+        });
 
-        const result = await productService.updateProduct(1, updatedData);
+        sinon.stub(productRepository, "update").resolves({ updated: 1 });
+
+        const result = await productService.updateProduct(
+          fakeUpdatedProduct.id,
+          updatedData,
+        );
 
         expect(result).to.include({
           name: updatedData.name,

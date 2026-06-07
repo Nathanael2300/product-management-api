@@ -1,4 +1,4 @@
-name: Unit Model Tests
+name: Unit Repository Tests
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - feature/**
 
 jobs:
-  Unit-Model-Tests:
+  Unit-Repository-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,7 +35,7 @@ jobs:
         run: npm install
 
       - name: Run unit model tests
-        run: npm run test:model
+        run: npm run test:repository
 
       - name: Upload coverage report
         if: success()
