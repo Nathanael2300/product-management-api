@@ -1,9 +1,10 @@
 class ProductApi {
-  create(productData) {
+  create(productData, override = {}) {
     return cy.api({
       method: "POST",
       url: "/products",
       body: productData,
+      ...override,
     });
   }
 
@@ -14,25 +15,28 @@ class ProductApi {
     });
   }
 
-  getById(id) {
+  getById(id, override = {}) {
     return cy.api({
       method: "GET",
       url: `/products/${id}`,
+      ...override,
     });
   }
 
-  update(id, productData) {
+  update(id, productData, override = {}) {
     return cy.api({
       method: "PUT",
       url: `/products/${id}`,
       body: productData,
+      ...override,
     });
   }
 
-  delete(id) {
+  delete(id, override = {}) {
     return cy.api({
       method: "DELETE",
       url: `/products/${id}`,
+      ...override,
     });
   }
 }
