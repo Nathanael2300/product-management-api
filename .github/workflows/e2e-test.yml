@@ -39,6 +39,9 @@ jobs:
         env:
           PORT: 3003
 
+      - name: Wait for server
+        run: npx wait-on http://localhost:3003
+
       - name: Run E2e tests
         run: npm run test:e2e
 
