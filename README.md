@@ -92,7 +92,6 @@ tests/
 
 * Required fields
 * Invalid price validation
-* Duplicate product validation
 * Product existence validation
 
 ---
