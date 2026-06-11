@@ -35,7 +35,9 @@ jobs:
         run: npm install
 
       - name: Run server
-        run: npm run dev
+        run: npm start &
+        env:
+          PORT: 3003
 
       - name: Run E2e tests
         run: npm run test:e2e
